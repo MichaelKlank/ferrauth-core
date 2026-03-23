@@ -2,7 +2,7 @@
 
 > Pluggable authentication for Rust services — Password, TOTP and Passkey in one unified trait.
 
-[![CI](https://img.shields.io/github/actions/workflow/status/ferrauth/ferrauth-core/ci.yml?branch=main&logo=github)](https://github.com/ferrauth/ferrauth-core/actions/workflows/ci.yml)
+[![CI](https://img.shields.io/github/actions/workflow/status/MichaelKlank/ferrauth-core/ci.yml?branch=main&logo=github)](https://github.com/MichaelKlank/ferrauth-core/actions/workflows/ci.yml)
 [![crates.io](https://img.shields.io/crates/v/ferrauth-core.svg)](https://crates.io/crates/ferrauth-core)
 [![docs.rs](https://docs.rs/ferrauth-core/badge.svg)](https://docs.rs/ferrauth-core)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
