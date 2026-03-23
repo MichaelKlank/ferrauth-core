@@ -10,6 +10,5 @@ mod tests {
     #[test]
     fn placeholder_test() {
         // TODO: Add real tests for the crate's public API once it is defined.
-        assert!(true);
     }
 }
