@@ -2,3 +2,5 @@
 **/*.rs.bk
 .env
 .DS_Store
+coverage-html/*
+lcov.info

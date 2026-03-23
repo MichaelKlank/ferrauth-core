@@ -35,7 +35,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+#        os: [ubuntu-latest, windows-latest, macos-latest] # windows disabled because speed issues depending on ssl build time
+        os: [ubuntu-latest, macos-latest]
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - uses: shogo82148/actions-setup-perl@22ab01e83d59dc1abe1796fd8f338da7e7f2d033 # v1.38.1
@@ -56,3 +57,34 @@ jobs:
       - uses: rustsec/audit-check@69366f33c96575abad1ee0dba8212993eecbe998 # v2.0.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+  coverage:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: dtolnay/rust-toolchain@631a55b12751854ce901bb631d5902ceb48146f7
+        with: { components: llvm-tools-preview }
+      - uses: taiki-e/install-action@21eb0b6228fa6252dafdd9c82e7516ad2328c775 # refs/tags/cargo-llvm-cov
+      - name: Run tests with coverage (LCOV)
+        run: cargo llvm-cov --all-features --lcov --output-path lcov.info
+      - name: Coverage summary (log + job summary)
+        run: |
+          cargo llvm-cov report --json > coverage-report.json
+          jq -r '
+            .data[0].totals as $t |
+            "## Coverage summary\n\n" +
+            "| Metric | Covered | Total | % |\n" +
+            "|--------|--------:|------:|:-:|\n" +
+            "| Lines | \($t.lines.covered) | \($t.lines.count) | \($t.lines.percent)% |\n" +
+            "| Regions | \($t.regions.covered) | \($t.regions.count) | \($t.regions.percent)% |\n" +
+            "| Functions | \($t.functions.covered) | \($t.functions.count) | \($t.functions.percent)% |\n"
+          ' coverage-report.json | tee -a "$GITHUB_STEP_SUMMARY"
+      - uses: romeovs/lcov-reporter-action@87a815f34ec27a5826abba44ce09bbc688da58fd # v0.4.0
+        with:
+          lcov-file: lcov.info
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: codecov/codecov-action@1af58845a975a7985b0beb0cbe6fbbb71a41dbad # v5.5.3
+        with: { files: lcov.info }
