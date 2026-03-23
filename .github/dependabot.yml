@@ -1,0 +1,27 @@
+version: 2
+updates:
+  - package-ecosystem: cargo
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: "Etc/UTC"
+    groups:
+      # Patch-only group: separate PRs for minor/major. Auto-merge workflow targets semver-patch only.
+      cargo-patch:
+        patterns:
+          - "*"
+        update-types:
+          - patch
+
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: monthly
+    groups:
+      actions-patch:
+        patterns:
+          - "*"
+        update-types:
+          - patch

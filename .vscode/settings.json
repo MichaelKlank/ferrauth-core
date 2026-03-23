@@ -1,0 +1,5 @@
+{
+  "rust-analyzer.cargo.extraEnv": {
+    "CARGO_HUSKY_DONT_INSTALL_HOOKS": "1"
+  }
+}
