@@ -82,19 +82,39 @@ jobs:
         with:
           tool: cargo-llvm-cov
       - name: Run tests with coverage (LCOV)
-        run: cargo llvm-cov --all-features --lcov --output-path lcov.info --fail-under-lines 80
-      - name: Coverage summary (log + job summary)
+        run: cargo llvm-cov --all-features --lcov --output-path lcov.info
+
+      - name: Coverage summary and minimum line coverage
+        env:
+          MIN_LINE_COVERAGE_PERCENT: "80"
         run: |
+          set -euo pipefail
           cargo llvm-cov report --json > coverage-report.json
-          jq -r '
+          LINE_PCT=$(jq -r '.data[0].totals.lines.percent' coverage-report.json)
+          COVERED=$(jq -r '.data[0].totals.lines.covered' coverage-report.json)
+          TOTAL=$(jq -r '.data[0].totals.lines.count' coverage-report.json)
+          echo ""
+          echo "=========================================="
+          echo "LINE COVERAGE: ${LINE_PCT}%  (${COVERED} / ${TOTAL} lines)"
+          echo "REQUIRED MIN:  ${MIN_LINE_COVERAGE_PERCENT}%"
+          echo "=========================================="
+          echo ""
+          jq -r --arg min "${MIN_LINE_COVERAGE_PERCENT}" '
             .data[0].totals as $t |
             "## Coverage summary\n\n" +
             "| Metric | Covered | Total | % |\n" +
             "|--------|--------:|------:|:-:|\n" +
             "| Lines | \($t.lines.covered) | \($t.lines.count) | \($t.lines.percent)% |\n" +
+            ("*(CI requires at least **" + $min + "%** line coverage.)*\n\n") +
             "| Regions | \($t.regions.covered) | \($t.regions.count) | \($t.regions.percent)% |\n" +
             "| Functions | \($t.functions.covered) | \($t.functions.count) | \($t.functions.percent)% |\n"
           ' coverage-report.json | tee -a "$GITHUB_STEP_SUMMARY"
+          if jq -e --argjson min "${MIN_LINE_COVERAGE_PERCENT}" \
+            '.data[0].totals.lines.percent < $min' coverage-report.json >/dev/null
+          then
+            echo "::error title=Line coverage below minimum::Workspace line coverage is ${LINE_PCT}% (${COVERED}/${TOTAL} lines) but CI requires at least ${MIN_LINE_COVERAGE_PERCENT}%. Add or extend tests for uncovered code under src/, then re-run cargo llvm-cov locally."
+            exit 1
+          fi
       - uses: romeovs/lcov-reporter-action@87a815f34ec27a5826abba44ce09bbc688da58fd # v0.4.0
         with:
           lcov-file: lcov.info

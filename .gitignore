@@ -4,3 +4,4 @@
 .DS_Store
 coverage-html/*
 lcov.info
+coverage-report.json
