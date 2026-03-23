@@ -20,7 +20,14 @@ pub const ATTR_AUTH_METHOD: &str = "auth.method";
 /// Standard attribute: authenticated subject identifier (e.g. user id).
 pub const ATTR_USER_ID: &str = "user.id";
 
-const MAX_AUTH_METHOD_LEN: usize = 64;
+/// Maximum UTF-8 byte length of the sanitized auth method label written to the span.
+///
+/// If the trimmed first line is longer than this, it is truncated and a single ellipsis
+/// character (`…`) is appended. The prefix is shortened so **prefix + `…`** never exceeds
+/// this byte length.
+pub const MAX_AUTH_METHOD_LABEL_UTF8_BYTES: usize = 64;
+
+const AUTH_METHOD_TRUNCATION_SUFFIX: char = '…';
 
 /// Longest prefix of `s` that ends on a UTF-8 boundary and has byte length ≤ `max_bytes`.
 fn utf8_prefix_at_most_bytes(s: &str, max_bytes: usize) -> &str {
@@ -44,9 +51,11 @@ fn sanitize_auth_method_label(s: &str) -> Cow<'_, str> {
     if s.is_empty() {
         return Cow::Borrowed("unknown");
     }
-    if s.len() > MAX_AUTH_METHOD_LEN {
-        let truncated = utf8_prefix_at_most_bytes(s, MAX_AUTH_METHOD_LEN);
-        Cow::Owned(format!("{truncated}…"))
+    if s.len() > MAX_AUTH_METHOD_LABEL_UTF8_BYTES {
+        let max_prefix = MAX_AUTH_METHOD_LABEL_UTF8_BYTES
+            .saturating_sub(AUTH_METHOD_TRUNCATION_SUFFIX.len_utf8());
+        let truncated = utf8_prefix_at_most_bytes(s, max_prefix);
+        Cow::Owned(format!("{truncated}{AUTH_METHOD_TRUNCATION_SUFFIX}"))
     } else {
         Cow::Borrowed(s)
     }

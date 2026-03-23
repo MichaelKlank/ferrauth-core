@@ -4,7 +4,9 @@
 use std::sync::{Arc, Mutex};
 
 use ferrauth_core::auth_operation_span;
-use ferrauth_core::telemetry::{ATTR_AUTH_METHOD, ATTR_USER_ID, SPAN_AUTH, auth_span};
+use ferrauth_core::telemetry::{
+    ATTR_AUTH_METHOD, ATTR_USER_ID, MAX_AUTH_METHOD_LABEL_UTF8_BYTES, SPAN_AUTH, auth_span,
+};
 use tracing::field::{Field, Visit};
 use tracing::span::Attributes;
 use tracing::subscriber::NoSubscriber;
@@ -175,7 +177,11 @@ fn sanitize_truncates_long_method_label() {
 
     let pairs = captured.0.lock().expect("lock poisoned").clone();
     let v = method_value(&pairs);
-    assert!(v.contains('…') || v.len() <= 70, "value should truncate: {v:?}");
+    assert!(v.contains('…'), "value should truncate: {v:?}");
+    assert!(
+        v.len() <= MAX_AUTH_METHOD_LABEL_UTF8_BYTES,
+        "truncated label must fit byte budget (incl. ellipsis): {v:?}"
+    );
 }
 
 #[test]
@@ -186,7 +192,10 @@ fn sanitize_truncates_on_utf8_char_boundary() {
 
     // 62 ASCII bytes + 4-byte emoji: a naive `&s[..64]` slice splits the emoji and would panic.
     let label = format!("{}😀", "a".repeat(62));
-    assert!(label.len() > 64, "label must exceed auth method byte budget");
+    assert!(
+        label.len() > MAX_AUTH_METHOD_LABEL_UTF8_BYTES,
+        "label must exceed auth method byte budget"
+    );
     let span = auth_span(&label, None);
     let _e = span.enter();
 
@@ -196,6 +205,10 @@ fn sanitize_truncates_on_utf8_char_boundary() {
     assert!(
         !v.contains('😀'),
         "emoji must not appear if it does not fit within the byte budget: {v:?}"
+    );
+    assert!(
+        v.len() <= MAX_AUTH_METHOD_LABEL_UTF8_BYTES,
+        "truncated label must fit byte budget (incl. ellipsis): {v:?}"
     );
 }
 
