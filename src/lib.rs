@@ -1,14 +1,15 @@
-pub fn add(left: u64, right: u64) -> u64 {
-    left + right
-}
+//! Crate root.
+//!
+//! TODO: Replace this placeholder with the actual public API
+//! and module layout as described in the crate's README.
+//!
+//! For now, this crate does not expose any public items from `lib.rs`.
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-
     #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
+    fn placeholder_test() {
+        // TODO: Add real tests for the crate's public API once it is defined.
+        assert!(true);
     }
 }
