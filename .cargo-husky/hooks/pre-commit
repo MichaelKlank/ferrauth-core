@@ -1,0 +1,8 @@
+#!/bin/sh
+set -eu
+
+echo '+cargo fmt --all -- --check'
+cargo fmt --all -- --check
+
+echo '+cargo clippy --all-features -- -D warnings'
+cargo clippy --all-features -- -D warnings
