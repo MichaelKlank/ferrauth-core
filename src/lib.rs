@@ -3,7 +3,12 @@
 //! TODO: Replace this placeholder with the actual public API
 //! and module layout as described in the crate's README.
 //!
-//! For now, this crate does not expose any public items from `lib.rs`.
+//! ## Tracing
+//!
+//! The [`telemetry`] module defines standard auth span attributes. This crate does **not**
+//! re-export [`tracing`]; embed your own subscriber.
+
+pub mod telemetry;
 
 #[cfg(test)]
 mod tests {
