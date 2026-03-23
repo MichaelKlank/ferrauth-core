@@ -14,7 +14,8 @@ categories = ["cryptography", "security"]
 [features]
 default = []
 totp    = ["dep:totp-rs"]
-passkey = ["dep:webauthn-rs"]
+# `openssl` with `vendored` avoids needing a system OpenSSL install (notably on Windows MSVC CI).
+passkey = ["dep:webauthn-rs", "dep:openssl"]
 full    = ["totp", "passkey"]
 
 [dependencies]
@@ -30,6 +31,11 @@ tracing     = "0.1"
 [dependencies.totp-rs]
 version  = "5"
 optional = true
+
+[dependencies.openssl]
+version  = "0.10"
+optional = true
+features = ["vendored"]
 
 [dependencies.webauthn-rs]
 version  = "0.5"
