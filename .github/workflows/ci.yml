@@ -15,6 +15,8 @@ permissions:
   contents: read
 env:
   CARGO_TERM_COLOR: always
+  # JS actions still on Node 20 (e.g. rustsec/audit-check, romeovs/lcov-reporter) until they ship Node 24.
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   fmt:
