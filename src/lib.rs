@@ -6,7 +6,7 @@
 //! ## Tracing
 //!
 //! The [`telemetry`] module defines standard auth span attributes. This crate does **not**
-//! re-export [`tracing`]; embed your own subscriber.
+//! re-export [`tracing`]; install/set your own subscriber (e.g., via `tracing-subscriber`).
 
 pub mod telemetry;
 
