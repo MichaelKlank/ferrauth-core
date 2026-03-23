@@ -15,8 +15,8 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b
+      - uses: dtolnay/rust-toolchain@3d6f55c9ac9d41c25bfed767343b02d0a601416b
         with:
           toolchain: 1.88.0
           components: rustfmt, clippy
