@@ -6,10 +6,17 @@ on:
   pull_request:
     branches: [main]
 
+# New pushes supersede older runs on the same ref (e.g. extra commits on a PR).
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
 env:
   CARGO_TERM_COLOR: always
+  # JS actions still on Node 20 (e.g. rustsec/audit-check, romeovs/lcov-reporter) until they ship Node 24.
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   fmt:
@@ -69,7 +76,7 @@ jobs:
         with: { components: llvm-tools-preview }
       - uses: taiki-e/install-action@21eb0b6228fa6252dafdd9c82e7516ad2328c775 # refs/tags/cargo-llvm-cov
       - name: Run tests with coverage (LCOV)
-        run: cargo llvm-cov --all-features --lcov --output-path lcov.info
+        run: cargo llvm-cov --all-features --lcov --output-path lcov.info --fail-under-lines 80
       - name: Coverage summary (log + job summary)
         run: |
           cargo llvm-cov report --json > coverage-report.json
