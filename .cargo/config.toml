@@ -1,0 +1,4 @@
+[alias]
+check-all = "clippy --all-features -- -D warnings"
+test-all  = "test --all-features"
+doc-all   = "doc --all-features --no-deps"
