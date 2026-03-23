@@ -17,6 +17,8 @@ env:
   CARGO_TERM_COLOR: always
   # JS actions still on Node 20 (e.g. rustsec/audit-check, romeovs/lcov-reporter) until they ship Node 24.
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+  # cargo-husky installs hooks from .cargo-husky/hooks only for local dev; skip on CI runners.
+  CARGO_HUSKY_DONT_INSTALL_HOOKS: true
 
 jobs:
   fmt:
