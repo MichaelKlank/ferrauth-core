@@ -25,7 +25,7 @@ jobs:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - uses: dtolnay/rust-toolchain@631a55b12751854ce901bb631d5902ceb48146f7
         with:
-          toolchain: 1.88.0
+          toolchain: 1.94.0
           components: rustfmt
       - run: cargo fmt --all -- --check
   clippy:
@@ -34,7 +34,7 @@ jobs:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - uses: dtolnay/rust-toolchain@631a55b12751854ce901bb631d5902ceb48146f7
         with:
-          toolchain: 1.88.0
+          toolchain: 1.94.0
           components: clippy
       - run: cargo clippy --all-targets --all-features --locked -- -D warnings
 
@@ -52,7 +52,7 @@ jobs:
           distribution: strawberry
       - uses: dtolnay/rust-toolchain@631a55b12751854ce901bb631d5902ceb48146f7
         with:
-          toolchain: 1.88.0
+          toolchain: 1.94.0
       - run: cargo test --all-features --locked
   audit:
     runs-on: ubuntu-latest
@@ -73,7 +73,9 @@ jobs:
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - uses: dtolnay/rust-toolchain@631a55b12751854ce901bb631d5902ceb48146f7
-        with: { components: llvm-tools-preview }
+        with:
+          toolchain: 1.94.0
+          components: llvm-tools-preview
       - uses: taiki-e/install-action@21eb0b6228fa6252dafdd9c82e7516ad2328c775 # refs/tags/cargo-llvm-cov
       - name: Run tests with coverage (LCOV)
         run: cargo llvm-cov --all-features --lcov --output-path lcov.info --fail-under-lines 80
