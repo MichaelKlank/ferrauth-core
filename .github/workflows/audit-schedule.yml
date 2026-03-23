@@ -1,4 +1,6 @@
-# Weekly `cargo audit` on Mondays (complements on-demand audit in CI on push/PR).
+# Weekly advisory scan on Mondays. Uses plain `cargo audit` (no GitHub Issues / Check API) so the
+# token only needs `contents: read`. Failures show up as a failed workflow run (e.g. notifications).
+# Push/PR audit with rustsec/audit-check remains in ci.yml for check runs on branches.
 name: Security audit (scheduled)
 
 on:
@@ -8,8 +10,6 @@ on:
 
 permissions:
   contents: read
-  checks: write
-  issues: write
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
@@ -19,6 +19,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-      - uses: rustsec/audit-check@69366f33c96575abad1ee0dba8212993eecbe998 # v2.0.0
+      - uses: dtolnay/rust-toolchain@631a55b12751854ce901bb631d5902ceb48146f7
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          toolchain: 1.94.0
+      - uses: taiki-e/install-action@78c26ab65ec71dd0aa512c278710986f0c30343e # refs/tags/cargo-audit
+      - run: cargo audit

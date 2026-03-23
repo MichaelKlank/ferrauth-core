@@ -310,6 +310,8 @@ cargo audit
 cargo doc --all-features --no-deps --open
 ```
 
+**Security audits:** On **push/PR**, CI runs `rustsec/audit-check` and can post a **check** on the change. A **weekly** workflow (Mondays, UTC) runs plain **`cargo audit`** only — it does **not** open GitHub issues (least-privilege token); a **failed run** means the lockfile matches advisories you should address.
+
 ### Run a single example
 
 ```bash
