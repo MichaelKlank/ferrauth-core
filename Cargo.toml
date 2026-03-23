@@ -2,14 +2,14 @@
 name = "ferrauth-core"
 version = "0.1.0"
 edition = "2024"
+rust-version = "1.85.0"
+
 description = "Core library for Ferrauth"
 license = "MIT"
 repository = "https://github.com/ferrauth/ferrauth-core"
 readme = "README.md"
 keywords = ["authentication", "authorization", "totp", "passkey"]
 categories = ["cryptography", "security"]
-
-
 
 [features]
 default = []
