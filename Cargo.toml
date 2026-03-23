@@ -1,0 +1,36 @@
+[package]
+name = "ferrauth-core"
+version = "0.1.0"
+edition = "2024"
+description = "Core library for Ferrauth"
+license = "MIT"
+repository = "https://github.com/ferrauth/ferrauth-core"
+readme = "README.md"
+keywords = ["authentication", "authorization", "totp", "passkey"]
+categories = ["cryptography", "security"]
+
+
+
+[features]
+default = []
+totp    = ["dep:totp-rs"]
+passkey = ["dep:webauthn-rs"]
+full    = ["totp", "passkey"]
+
+[dependencies]
+async-trait = "0.1"
+uuid        = { version = "1", features = ["v4", "serde"] }
+thiserror   = "2.0.18"
+anyhow      = "1"
+chrono      = { version = "0.4", features = ["serde"] }
+serde       = { version = "1", features = ["derive"] }
+zeroize     = { version = "1", features = ["derive"] }
+tracing     = "0.1"
+
+[dependencies.totp-rs]
+version  = "5"
+optional = true
+
+[dependencies.webauthn-rs]
+version  = "0.5"
+optional = true
