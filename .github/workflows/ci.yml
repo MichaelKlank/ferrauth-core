@@ -53,6 +53,6 @@ jobs:
       checks: write
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-      - uses: rustsec/audit-check@v1
+      - uses: rustsec/audit-check@1a2b3c4d5e6f7890abcdef1234567890abcdef12 # v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
