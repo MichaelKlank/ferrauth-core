@@ -7,7 +7,7 @@ rust-version = "1.88.0"
 description = "Core library for Ferrauth"
 license = "MIT"
 repository = "https://github.com/ferrauth/ferrauth-core"
-readme = "Readme.md"
+readme = "README.md"
 keywords = ["authentication", "authorization", "totp", "passkey"]
 categories = ["cryptography", "security"]
 
