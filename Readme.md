@@ -273,7 +273,7 @@ This repo uses [`cargo-husky`](https://github.com/rhysd/cargo-husky) as a **dev-
 The **pre-commit** hook runs:
 
 1. `cargo fmt --all -- --check` — fails if the tree is not rustfmt-clean  
-2. `cargo clippy --all-features -- -D warnings` — same bar as CI  
+2. `cargo clippy --all-targets --all-features --locked -- -D warnings` — same invocation as the **clippy** job in CI (including `--locked` so the hook does not change `Cargo.lock`)  
 
 To **skip** hook installation (e.g. in automation), set:
 
@@ -293,7 +293,7 @@ cargo build --all-features
 cargo test --all-features
 
 # Run linting
-cargo clippy --all-features -- -D warnings
+cargo clippy --all-targets --all-features --locked -- -D warnings
 
 # Check formatting
 cargo fmt --check
