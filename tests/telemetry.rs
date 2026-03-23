@@ -179,6 +179,27 @@ fn sanitize_truncates_long_method_label() {
 }
 
 #[test]
+fn sanitize_truncates_on_utf8_char_boundary() {
+    let captured = Captured::default();
+    let subscriber = Registry::default().with(CaptureLayer(captured.clone()));
+    let _guard = tracing::subscriber::set_default(subscriber);
+
+    // 62 ASCII bytes + 4-byte emoji: a naive `&s[..64]` slice splits the emoji and would panic.
+    let label = format!("{}😀", "a".repeat(62));
+    assert!(label.len() > 64, "label must exceed auth method byte budget");
+    let span = auth_span(&label, None);
+    let _e = span.enter();
+
+    let pairs = captured.0.lock().expect("lock poisoned").clone();
+    let v = method_value(&pairs);
+    assert!(v.ends_with('…'), "expected truncation suffix: {v:?}");
+    assert!(
+        !v.contains('😀'),
+        "emoji must not appear if it does not fit within the byte budget: {v:?}"
+    );
+}
+
+#[test]
 fn sanitize_uses_first_line_only() {
     let captured = Captured::default();
     let subscriber = Registry::default().with(CaptureLayer(captured.clone()));

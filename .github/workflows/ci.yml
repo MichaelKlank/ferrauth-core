@@ -110,7 +110,7 @@ jobs:
             "| Functions | \($t.functions.covered) | \($t.functions.count) | \($t.functions.percent)% |\n"
           ' coverage-report.json | tee -a "$GITHUB_STEP_SUMMARY"
           if jq -e --argjson min "${MIN_LINE_COVERAGE_PERCENT}" \
-            '(.data[0].totals.lines.percent | tonumber) < $min' coverage-report.json >/dev/null
+            '.data[0].totals.lines.percent < $min' coverage-report.json >/dev/null
           then
             echo "::error title=Line coverage below minimum::Workspace line coverage is ${LINE_PCT}% (${COVERED}/${TOTAL} lines) but CI requires at least ${MIN_LINE_COVERAGE_PERCENT}%. Add or extend tests for uncovered code under src/, then re-run cargo llvm-cov locally."
             exit 1

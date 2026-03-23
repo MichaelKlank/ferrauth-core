@@ -22,6 +22,22 @@ pub const ATTR_USER_ID: &str = "user.id";
 
 const MAX_AUTH_METHOD_LEN: usize = 64;
 
+/// Longest prefix of `s` that ends on a UTF-8 boundary and has byte length ≤ `max_bytes`.
+fn utf8_prefix_at_most_bytes(s: &str, max_bytes: usize) -> &str {
+    if s.len() <= max_bytes {
+        return s;
+    }
+    let mut end = 0usize;
+    for (i, ch) in s.char_indices() {
+        let next = i + ch.len_utf8();
+        if next > max_bytes {
+            break;
+        }
+        end = next;
+    }
+    &s[..end]
+}
+
 fn sanitize_auth_method_label(s: &str) -> Cow<'_, str> {
     let s = s.trim();
     let s = s.lines().next().unwrap_or("").trim();
@@ -29,7 +45,8 @@ fn sanitize_auth_method_label(s: &str) -> Cow<'_, str> {
         return Cow::Borrowed("unknown");
     }
     if s.len() > MAX_AUTH_METHOD_LEN {
-        Cow::Owned(format!("{}…", &s[..MAX_AUTH_METHOD_LEN]))
+        let truncated = utf8_prefix_at_most_bytes(s, MAX_AUTH_METHOD_LEN);
+        Cow::Owned(format!("{truncated}…"))
     } else {
         Cow::Borrowed(s)
     }
@@ -44,13 +61,13 @@ pub fn auth_span(auth_method: &str, user_id: Option<&Uuid>) -> Span {
     match user_id {
         Some(id) => tracing::info_span!(
             SPAN_AUTH,
-            "auth.method" = %method,
-            "user.id" = %id,
+            { ATTR_AUTH_METHOD } = %method,
+            { ATTR_USER_ID } = %id,
         ),
         None => tracing::info_span!(
             SPAN_AUTH,
-            "auth.method" = %method,
-            "user.id" = tracing::field::Empty,
+            { ATTR_AUTH_METHOD } = %method,
+            { ATTR_USER_ID } = tracing::field::Empty,
         ),
     }
 }
