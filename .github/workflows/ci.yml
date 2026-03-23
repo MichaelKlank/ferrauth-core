@@ -79,6 +79,8 @@ jobs:
           toolchain: 1.94.0
           components: llvm-tools-preview
       - uses: taiki-e/install-action@21eb0b6228fa6252dafdd9c82e7516ad2328c775 # refs/tags/cargo-llvm-cov
+        with:
+          tool: cargo-llvm-cov
       - name: Run tests with coverage (LCOV)
         run: cargo llvm-cov --all-features --lcov --output-path lcov.info --fail-under-lines 80
       - name: Coverage summary (log + job summary)
