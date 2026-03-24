@@ -69,8 +69,8 @@ jobs:
   coverage:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
-      issues: write
+      # lcov-reporter posts a commit comment (requires write); read is implied for checkout.
+      contents: write
       pull-requests: write
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
@@ -115,7 +115,9 @@ jobs:
             echo "::error title=Line coverage below minimum::Workspace line coverage is ${LINE_PCT}% (${COVERED}/${TOTAL} lines) but CI requires at least ${MIN_LINE_COVERAGE_PERCENT}%. Add or extend tests for uncovered code under src/, then re-run cargo llvm-cov locally."
             exit 1
           fi
+      # Fork PRs get a read-only token — commit comments always 403; skip to keep the job green.
       - uses: romeovs/lcov-reporter-action@87a815f34ec27a5826abba44ce09bbc688da58fd # v0.4.0
+        if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
         with:
           lcov-file: lcov.info
           github-token: ${{ secrets.GITHUB_TOKEN }}

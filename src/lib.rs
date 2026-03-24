@@ -1,19 +1,35 @@
-//! Crate root.
-//!
-//! TODO: Replace this placeholder with the actual public API
-//! and module layout as described in the crate's README.
+//! Pluggable authentication: password (always), optional TOTP and passkey providers.
 //!
 //! ## Tracing
 //!
-//! The [`telemetry`] module defines standard auth span attributes. This crate does **not**
-//! re-export [`tracing`]; install/set your own subscriber (e.g., via `tracing-subscriber`).
+//! [`AuthProvider::verify`] implementations emit `tracing` spans and events. Sensitive values are
+//! never passed into [`tracing::instrument`] fields — use [`telemetry`](crate::telemetry) attribute
+//! names only with coarse labels and ids.
 
 pub mod telemetry;
 
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn placeholder_test() {
-        // TODO: Add real tests for the crate's public API once it is defined.
-    }
-}
+mod auth_method;
+mod auth_tracing;
+mod credentials;
+mod error;
+mod password;
+mod provider;
+mod result;
+
+#[cfg(feature = "passkey")]
+mod passkey;
+#[cfg(feature = "totp")]
+mod totp;
+
+pub use auth_method::AuthMethod;
+#[cfg(feature = "totp")]
+pub use credentials::TotpSecret;
+pub use credentials::{Credentials, PasswordHash, PlaintextPassword};
+pub use error::AuthError;
+#[cfg(feature = "passkey")]
+pub use passkey::PasskeyAuth;
+pub use password::PasswordAuth;
+pub use provider::AuthProvider;
+pub use result::AuthResult;
+#[cfg(feature = "totp")]
+pub use totp::TotpAuth;
