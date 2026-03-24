@@ -19,14 +19,18 @@ passkey = ["dep:webauthn-rs", "dep:openssl"]
 full    = ["totp", "passkey"]
 
 [dependencies]
-async-trait = "0.1"
-uuid        = { version = "1", features = ["v4", "serde"] }
-thiserror   = "2.0.18"
-anyhow      = "1"
-chrono      = { version = "0.4", features = ["serde"] }
-serde       = { version = "1", features = ["derive"] }
-zeroize     = { version = "1", features = ["derive"] }
-tracing     = "0.1"
+async-trait   = "0.1"
+argon2        = "0.5"
+password-hash = "0.5"
+rand_core     = { version = "0.6", features = ["getrandom"] }
+tokio         = { version = "1", features = ["macros", "rt-multi-thread"] }
+uuid          = { version = "1", features = ["v4", "serde"] }
+thiserror     = "2.0.18"
+anyhow        = "1"
+chrono        = { version = "0.4", features = ["serde"] }
+serde         = { version = "1", features = ["derive"] }
+zeroize       = { version = "1", features = ["derive"] }
+tracing       = "0.1"
 
 [dependencies.totp-rs]
 version  = "5"
@@ -42,6 +46,7 @@ version  = "0.5"
 optional = true
 
 [dev-dependencies]
+tokio              = { version = "1", features = ["macros", "rt-multi-thread"] }
 tracing-subscriber = { version = "0.3", default-features = false, features = ["registry", "std"] }
 
 [dev-dependencies.cargo-husky]
