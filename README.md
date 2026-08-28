@@ -312,7 +312,7 @@ cargo doc --all-features --no-deps --open
 
 **Security audits:** On **push/PR**, CI runs `rustsec/audit-check` and can post a **check** on the change. A **weekly** workflow (Mondays, UTC) runs plain **`cargo audit`** only — it does **not** open GitHub issues (least-privilege token); a **failed run** means the lockfile matches advisories you should address.
 
-**Coverage:** The **coverage** job enforces a **minimum line coverage** (currently **80%**). If it fails, the log and job summary print the measured percentage vs. the required minimum and an annotation explains that tests under `src/` need to cover more lines (run `cargo llvm-cov --all-features` locally to inspect).
+**Coverage:** The **coverage** job enforces a **minimum line coverage** (currently **80%**). If it fails, the log and job summary print the measured percentage vs. the required minimum and an annotation explains that tests under `src/` need to cover more lines. Locally, `cargo llvm-cov --all-features` prints a full **% table**; `cargo cov-all` only writes `lcov.info` (no table). Use **`./scripts/cov-all.sh`** for LCOV **and** the table, or run **`cargo cov-all && cargo cov-report`**.
 
 ### Run a single example
 

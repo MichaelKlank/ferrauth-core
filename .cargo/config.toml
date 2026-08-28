@@ -2,3 +2,7 @@
 check-all = "clippy --all-features -- -D warnings"
 test-all  = "test --all-features"
 doc-all   = "doc --all-features --no-deps"
+# LCOV only (no % table — use `cov-report` after, or run `./scripts/cov-all.sh`).
+# Requires `cargo install cargo-llvm-cov` + `rustup component add llvm-tools-preview`.
+cov-all    = "llvm-cov --all-features --lcov --output-path lcov.info"
+cov-report = "llvm-cov report"
